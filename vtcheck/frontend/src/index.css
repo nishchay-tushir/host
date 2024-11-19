@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgba(0, 0, 0, 0.080);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Hide content on devices with a screen width below 1024px */
+/* @media (max-width: 1023px) {
+  body {
+    display: none;
+  }
+} */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
