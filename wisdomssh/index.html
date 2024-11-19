@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <title>Certificate Registration</title>
+    <style>
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('./SchaefflerMeta-Bold.otf') format('opentype'); /* Path to your .otf file */
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        body {
+            font-family: 'CustomFont', Arial, sans-serif;
+            background-color: #f0f0f0;
+            background-image: url('./a.png');
+            background-size: 95%; /* Ensures the background image covers the entire body */
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: fit-content;
+        }
+
+        .container {
+            background-color: #fff;
+            padding-top: 5px;
+            padding-bottom: 10px;
+            padding-left: 80px;
+            padding-right: 80px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 2%;
+            opacity: 0.95;
+        }
+        .container img{
+            width: 200px;
+            margin-left: 10%;
+            display: flex;
+            justify-content: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        select, button {
+            margin-top: 5px;
+            padding: 10px;
+            font-size: 12px;
+        }
+        input {
+            margin-top: 5px;
+            padding-right: 20px;
+            padding-left: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 12px;
+            border-radius: 5px;
+            border: 0.5px solid #6e6e6e;
+            outline: none;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0);
+        }
+
+        button {
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #successMessage {
+            margin-top: 20px;
+            color: green;
+            font-weight: bold;
+        }
+
+        #dataDisplay {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+        }
+
+        .certificate {
+            position: relative;
+            width: 920px; /* Adjust as needed */
+            height: 650px; /* Adjust as needed */
+            background-image: url('./main.png'); /* Replace with your certificate image */
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .certificate-content h1 {
+            position: absolute;
+            top: 60%; /* Adjust as needed */
+            left: 50%; /* Adjust as needed */
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: rgb(0, 0, 0); /* Change text color based on your certificate design */
+            font-size: 3.5rem; /* Adjust font size as needed */
+            font-family: 'CustomFont', Arial, sans-serif;
+            text-decoration: underline;
+        }
+
+        .certificate-content h3 {
+            position: absolute;
+            top: 75%; /* Adjust as needed */
+            left: 50%; /* Adjust as needed */
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: rgb(0, 0, 0); /* Change text color based on your certificate design */
+            font-size: 1.3rem; /* Adjust font size as needed */
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <img src="./a.png" alt="">
+        <h2>Sustainability Program <br> Certificate Registration</h2>
+        <form id="certificateForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" required>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" required>
+
+            <button type="submit">Generate Certificate</button>
+        </form>
+
+        <div id="successMessage"></div>
+        <div id="dataDisplay"></div>
+
+    </div>
+
+    <div class="certificate" id="certificate">
+        <div class="certificate-content" id="certificateContent"></div>
+    </div>
+    <button id="downloadButton" style="display: none;">Download Certificate</button>
+
+    <script>
+        let registrations = [];
+        let currentId = 1;
+
+        // Load saved registrations from localStorage if available
+        if (localStorage.getItem('registrations')) {
+            registrations = JSON.parse(localStorage.getItem('registrations'));
+            currentId = registrations.length + 1;
+            displayRegistrations(); // Display previously saved registrations
+        }
+
+        document.getElementById('certificateForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value;
+
+            // Create a new registration object
+            const newRegistration = {
+                id: currentId,
+                name: name,
+                state: state,
+                city: city
+            };
+
+            // Increment the current ID for the next registration
+            currentId++;
+
+            // Save the registration to the array
+            registrations.push(newRegistration);
+
+            // Update localStorage with the new array
+            localStorage.setItem('registrations', JSON.stringify(registrations));
+
+            // Show success message
+            document.getElementById('successMessage').textContent = 'Registration successful!';
+
+            // Optionally reset the form
+            document.getElementById('certificateForm').reset();
+
+            // Display updated registration data on the page
+            displayRegistrations();
+
+            // Show the certificate with the entered data
+            showCertificate(newRegistration);
+
+            // Show the download button
+            document.getElementById('downloadButton').style.display = 'block';
+        });
+
+        document.getElementById('downloadButton').addEventListener('click', function () {
+            const certificate = document.getElementById('certificate');
+        
+            html2canvas(certificate, { scale: 2 }).then(canvas => { // Increase scale to improve resolution
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png'); // Create a data URL for the image
+                link.download = `${registrations[registrations.length - 1].name}_Schaeffler_Sustainability_Program_Certificate.png`; // Set the download file name
+                link.click(); // Trigger the download
+            });
+        });
+
+        function displayRegistrations() {
+            const dataDisplay = document.getElementById('dataDisplay');
+            dataDisplay.style.display = 'none'; // Make the data display area visible
+
+            // Clear any previous display
+            dataDisplay.innerHTML = '';
+
+            // Create a table of registrations
+            let table = '<table border="1" cellpadding="5"><tr><th>ID</th><th>Name</th><th>State</th><th>City</th></tr>';
+
+            registrations.forEach(registration => {
+                table += `<tr>
+                            <td>${registration.id}</td>
+                            <td>${registration.name}</td>
+                            <td>${registration.state}</td>
+                            <td>${registration.city}</td>
+                          </tr>`;
+            });
+
+            table += '</table>';
+            dataDisplay.innerHTML = table;
+        }
+
+        function showCertificate(registration) {
+            const certificate = document.getElementById('certificate');
+            const certificateContent = document.getElementById('certificateContent');
+
+            // Set the content of the certificate
+            certificateContent.innerHTML = `
+                <h1>${registration.name}</h1>
+                <h3>${registration.state}, ${registration.city}</h3>
+            `;
+
+            // Show the certificate
+            certificate.style.display = 'block';
+        }
+
+        localStorage.clear();
+    </script>
+</body>
+</html>
